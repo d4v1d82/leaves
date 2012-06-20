@@ -40,6 +40,7 @@
 												 colorSpace, 
 												 kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
 	CGColorSpaceRelease(colorSpace);
+	if (context == nil) return nil;
 	CGContextClipToRect(context, CGRectMake(0, 0, pageSize.width, pageSize.height));
     
 	[dataSource renderPageAtIndex:pageIndex inContext:context];
