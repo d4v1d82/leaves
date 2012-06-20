@@ -25,6 +25,7 @@ CGFloat distance(CGPoint a, CGPoint b);
 @synthesize leafEdge, currentPageIndex, backgroundRendering, preferredTargetWidth, numberOfVisiblePages;
 
 
+
 - (void)setZoomActive:(BOOL)aZoomActive {
     zoomActive = aZoomActive;
     
@@ -117,7 +118,7 @@ CGFloat distance(CGPoint a, CGPoint b);
 
 
 - (void) setUpLayers {
-	self.clipsToBounds = YES;
+    self.clipsToBounds = YES;
     
 	topPage = [[CALayer alloc] init];
 	topPage.masksToBounds = YES;
@@ -211,6 +212,7 @@ CGFloat distance(CGPoint a, CGPoint b);
 	pageCache = [[LeavesCache alloc] initWithPageSize:self.bounds.size];
     numberOfVisiblePages = 1;
     mode = LeavesViewModeSinglePage;
+    
 }
 
 - (id)initWithFrame:(CGRect)frame {
@@ -558,6 +560,9 @@ CGFloat distance(CGPoint a, CGPoint b);
 - (void) layoutSubviews {
 	[super layoutSubviews];
 	
+    if(touchIsActive)
+        return;
+    
  	CGSize desiredPageSize = self.bounds.size;
     
     if (self.mode == LeavesViewModeFacingPages) {
@@ -584,6 +589,31 @@ CGFloat distance(CGPoint a, CGPoint b);
 	}
 }
 
+
+// This method will handle the double TAP gesture and will reposition the view at 1:1 scale whether the user tries to zoom out too much
+- (void)doubleTap:(UIGestureRecognizer *)gestureRecognizer {
+
+    [CATransaction begin];
+	float duration;
+
+    [self willTurnToPageAtIndex:currentPageIndex];
+    self.leafEdge = 1.0;
+    duration = 1 - leafEdge;
+    interactionLocked = YES;
+    [self performSelector:@selector(didTurnPageBackward)
+               withObject:nil 
+               afterDelay:duration + 0.25];
+
+[CATransaction setValue:[NSNumber numberWithFloat:duration]
+                 forKey:kCATransactionAnimationDuration];
+[CATransaction commit];
+
+}
+
+- (void)doubleTap {
+	
+	[self setZoomActive:NO];
+}
 
 @end
 

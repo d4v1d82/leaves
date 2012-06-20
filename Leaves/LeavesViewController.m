@@ -13,10 +13,18 @@
 #import "LeavesViewController.h"
 
 @implementation LeavesViewController
+UITapGestureRecognizer *tapGesture;
 
 - (void) initialize {
     leavesView = [[LeavesView alloc] initWithFrame:CGRectZero];
     leavesScrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    
+    tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
+    [tapGesture setNumberOfTapsRequired:2];
+	[tapGesture setDelegate:self];
+    [leavesView addGestureRecognizer:tapGesture];
+    
+    [self turnTapOn:NO];
 }
 
 - (id)initWithNibName:(NSString *)nibName bundle:(NSBundle *)nibBundle
@@ -75,6 +83,10 @@
     [leavesScrollView addSubview:leavesView];
     
     [self.view addSubview:leavesScrollView];
+    
+
+
+    
 }
 
 - (void) viewDidLoad {
@@ -100,7 +112,6 @@
 
 - (void)scrollViewDidZoom:(UIScrollView *)aScrollView 
 {
-    NSLog(@"view zoom %f", aScrollView.zoomScale);
     if(aScrollView.zoomScale == 1)
     {
         leavesView.zoomActive = NO;
@@ -109,7 +120,6 @@
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)aScrollView withView:(UIView *)view
 {
-    NSLog(@"view will zoom");
     if(aScrollView.zoomScale == 1) 
     {
         leavesView.zoomActive = YES;
@@ -145,4 +155,21 @@
     leavesScrollView.contentSize = leavesScrollView.bounds.size;    
 }
 
+
+- (void) goToPage:(NSInteger)pageNumber {
+	// Remember that currentPageIndex start from 0!
+	if (pageNumber >= 0 && pageNumber < [self numberOfPagesInLeavesView:leavesView])
+		leavesView.currentPageIndex = pageNumber;
+}
+
+- (void)doubleTap:(UIGestureRecognizer *)gestureRecognizer {
+    //leavesScrollView.contentSize = leavesScrollView.bounds.size;    
+    leavesScrollView.zoomScale = 1;
+    leavesView.zoomActive = NO;
+    
+}
+
+- (void)turnTapOn:(BOOL)state {
+    tapGesture.delegate = state ? self : nil;
+}
 @end

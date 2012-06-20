@@ -10,7 +10,7 @@
 #import "LeavesView.h"
 #import "LeavesTiledLayer.h"
 
-@interface LeavesViewController : UIViewController <LeavesViewDataSource, LeavesViewDelegate, UIScrollViewDelegate> {
+@interface LeavesViewController : UIViewController <LeavesViewDataSource, LeavesViewDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate> {
 	LeavesView *leavesView;
     UIScrollView *leavesScrollView;
 }
